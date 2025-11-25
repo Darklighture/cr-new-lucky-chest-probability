@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>皇室战争宝箱概率查询</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #ff6b00;
+            --secondary-color: #4a4a4a;
+            --background-color: #f5f5f5;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), #ff8c42);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .chest-type-selector {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: var(--card-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            flex-wrap: wrap;
+        }
+        
+        .chest-type {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            min-width: 120px;
+        }
+        
+        .chest-type.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: rgba(255, 107, 0, 0.05);
+        }
+        
+        .chest-type:hover:not(.active) {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: var(--card-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: rgba(255, 107, 0, 0.05);
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--secondary-color);
+        }
+        
+        .chart-container {
+            height: 400px;
+            margin-bottom: 30px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .data-table th {
+            background-color: rgba(255, 107, 0, 0.1);
+            font-weight: 600;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .arena-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .selector-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: white;
+            font-size: 1rem;
+        }
+        
+        .reward-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .reward-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .reward-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .reward-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-radius: 5px;
+        }
+        
+        .reward-name {
+            font-weight: 500;
+        }
+        
+        .reward-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .probability-high {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+        
+        .probability-medium {
+            color: #FF9800;
+            font-weight: 600;
+        }
+        
+        .probability-low {
+            color: #F44336;
+            font-weight: 600;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .chest-type-selector, .tabs {
+                flex-direction: column;
+            }
+            
+            .arena-selector {
+                flex-direction: column;
+            }
+            
+            .reward-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>皇室战争宝箱概率查询</h1>
+            <p class="subtitle">查看各类宝箱开箱概率、升星概率及竞技场奖励详情</p>
+        </header>
+        
+        <div class="chest-type-selector">
+            <div class="chest-type active" data-chest="normal">普通宝箱</div>
+            <div class="chest-type" data-chest="magic">魔法宝箱</div>
+            <div class="chest-type" data-chest="season">赛季宝箱</div>
+            <div class="chest-type" data-chest="evolution">进化宝箱</div>
+            <div class="chest-type" data-chest="hero">英雄宝箱</div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="chest-probability">开箱概率</div>
+            <div class="tab" data-tab="arena-rewards">竞技场奖励</div>
+            <div class="tab" data-tab="box-rewards">宝箱奖励</div>
+        </div>
+        
+        <!-- 普通宝箱内容 -->
+        <div class="chest-content active" data-chest="normal">
+            <div class="tab-content active" id="normal-chest-probability">
+                <h2 class="section-title">普通宝箱 - 开箱概率分析</h2>
+                
+                <div class="chart-container">
+                    <canvas id="normalProbabilityChart"></canvas>
+                </div>
+                
+                <h2 class="section-title">星级升星概率</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>星级</th>
+                            <th>旋转数</th>
+                            <th>1星概率</th>
+                            <th>升星概率</th>
+                            <th>2星概率</th>
+                            <th>升星概率</th>
+                            <th>3星概率</th>
+                            <th>升星概率</th>
+                            <th>4星概率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>初始只有1星</td>
+                            <td>自带3</td>
+                            <td>31.44%</td>
+                            <td>32%</td>
+                            <td>45.71%</td>
+                            <td>30%</td>
+                            <td>18.53%</td>
+                            <td>45%</td>
+                            <td>4.32%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="normal-arena-rewards">
+                <h2 class="section-title">普通宝箱 - 竞技场奖励查询</h2>
+                
+                <div class="arena-selector">
+                    <div class="selector-group">
+                        <label for="normal-star-level">选择星级:</label>
+                        <select id="normal-star-level">
+                            <option value="oneStar">一星等级</option>
+                            <option value="twoStar">二星等级</option>
+                            <option value="threeStar">三星等级</option>
+                            <option value="fourStar">四星等级</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-group">
+                        <label for="normal-arena-level">选择竞技场等级:</label>
+                        <select id="normal-arena-level">
+                            <!-- 选项将通过JavaScript动态填充 -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="reward-card">
+                    <h3 class="reward-title">奖励详情</h3>
+                    <div class="reward-grid" id="normal-reward-details">
+                        <!-- 奖励详情将通过JavaScript动态填充 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="normal-box-rewards">
+                <h2 class="section-title">普通宝箱 - 宝箱等级12奖励概率</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>奖励类型</th>
+                            <th>1星概率</th>
+                            <th>2星概率</th>
+                            <th>3星概率</th>
+                            <th>4星概率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>金币</td>
+                            <td class="probability-high">50.00%</td>
+                            <td class="probability-high">40.00%</td>
+                            <td class="probability-medium">30.00%</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>普通卡</td>
+                            <td class="probability-medium">25.89%</td>
+                            <td class="probability-medium">20.91%</td>
+                            <td class="probability-medium">20.20%</td>
+                            <td class="probability-medium">28.86%</td>
+                        </tr>
+                        <tr>
+                            <td>稀有卡</td>
+                            <td class="probability-medium">24.11%</td>
+                            <td class="probability-medium">19.47%</td>
+                            <td class="probability-medium">18.81%</td>
+                            <td class="probability-medium">26.87%</td>
+                        </tr>
+                        <tr>
+                            <td>史诗卡</td>
+                            <td>-</td>
+                            <td class="probability-medium">19.62%</td>
+                            <td class="probability-medium">18.95%</td>
+                            <td class="probability-medium">27.06%</td>
+                        </tr>
+                        <tr>
+                            <td>传说卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">11.21%</td>
+                            <td class="probability-low">16.02%</td>
+                        </tr>
+                        <tr>
+                            <td>英雄卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">0.84%</td>
+                            <td class="probability-low">1.19%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- 魔法宝箱内容 -->
+        <div class="chest-content" data-chest="magic">
+            <div class="tab-content active" id="magic-chest-probability">
+                <h2 class="section-title">魔法宝箱 - 开箱概率分析</h2>
+                
+                <div class="chart-container">
+                    <canvas id="magicProbabilityChart"></canvas>
+                </div>
+                
+                <h2 class="section-title">星级升星概率</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>星级</th>
+                            <th>旋转数</th>
+                            <th>1星概率</th>
+                            <th>升星概率</th>
+                            <th>2星概率</th>
+                            <th>升星概率</th>
+                            <th>3星概率</th>
+                            <th>升星概率</th>
+                            <th>4星概率</th>
+                            <th>升星概率</th>
+                            <th>5星概率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1星</td>
+                            <td>自带4</td>
+                            <td>31.64%</td>
+                            <td>25.00%</td>
+                            <td>43.04%</td>
+                            <td>23.00%</td>
+                            <td>20.25%</td>
+                            <td>23.00%</td>
+                            <td>4.06%</td>
+                            <td>23.00%</td>
+                            <td>1.01%</td>
+                        </tr>
+                        <tr>
+                            <td>2星</td>
+                            <td>自带4</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>33.36%</td>
+                            <td>24.00%</td>
+                            <td>45.59%</td>
+                            <td>20.00%</td>
+                            <td>19.71%</td>
+                            <td>6.00%</td>
+                            <td>1.34%</td>
+                        </tr>
+                        <tr>
+                            <td>3星</td>
+                            <td>自带4</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>40.96%</td>
+                            <td>20.00%</td>
+                            <td>56.97%</td>
+                            <td>2.00%</td>
+                            <td>2.07%</td>
+                        </tr>
+                        <tr>
+                            <td>4星</td>
+                            <td>无旋转</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>96.00%</td>
+                            <td>4.00%</td>
+                            <td>4.00%</td>
+                        </tr>
+                        <tr>
+                            <td>5星</td>
+                            <td>无旋转</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>100.00%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="magic-arena-rewards">
+                <h2 class="section-title">魔法宝箱 - 竞技场奖励查询</h2>
+                
+                <div class="arena-selector">
+                    <div class="selector-group">
+                        <label for="magic-star-level">选择星级:</label>
+                        <select id="magic-star-level">
+                            <option value="oneStar">一星等级</option>
+                            <option value="twoStar">二星等级</option>
+                            <option value="threeStar">三星等级</option>
+                            <option value="fourStar">四星等级</option>
+                            <option value="fiveStar">五星等级</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-group">
+                        <label for="magic-arena-level">选择竞技场等级:</label>
+                        <select id="magic-arena-level">
+                            <!-- 选项将通过JavaScript动态填充 -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="reward-card">
+                    <h3 class="reward-title">奖励详情</h3>
+                    <div class="reward-grid" id="magic-reward-details">
+                        <!-- 奖励详情将通过JavaScript动态填充 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="magic-box-rewards">
+                <h2 class="section-title">魔法宝箱 - 宝箱等级12奖励概率</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>奖励类型</th>
+                            <th>1星概率</th>
+                            <th>2星概率</th>
+                            <th>3星概率</th>
+                            <th>4星概率</th>
+                            <th>5星概率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>金币</td>
+                            <td class="probability-high">50.00%</td>
+                            <td class="probability-high">38.46%</td>
+                            <td class="probability-medium">28.85%</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>普通卡</td>
+                            <td class="probability-medium">25.89%</td>
+                            <td class="probability-medium">20.11%</td>
+                            <td class="probability-medium">18.75%</td>
+                            <td class="probability-medium">16.44%</td>
+                            <td class="probability-medium">16.58%</td>
+                        </tr>
+                        <tr>
+                            <td>稀有卡</td>
+                            <td class="probability-medium">24.11%</td>
+                            <td class="probability-medium">18.72%</td>
+                            <td class="probability-medium">17.46%</td>
+                            <td class="probability-medium">15.30%</td>
+                            <td class="probability-medium">15.43%</td>
+                        </tr>
+                        <tr>
+                            <td>史诗卡</td>
+                            <td>-</td>
+                            <td class="probability-medium">18.86%</td>
+                            <td class="probability-medium">17.59%</td>
+                            <td class="probability-medium">15.42%</td>
+                            <td class="probability-medium">15.55%</td>
+                        </tr>
+                        <tr>
+                            <td>传说卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">10.41%</td>
+                            <td class="probability-low">9.12%</td>
+                            <td class="probability-low">9.20%</td>
+                        </tr>
+                        <tr>
+                            <td>英雄卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">3.10%</td>
+                            <td class="probability-low">2.72%</td>
+                            <td class="probability-low">2.74%</td>
+                        </tr>
+                        <tr>
+                            <td>普通外卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">8.00%</td>
+                            <td class="probability-low">8.00%</td>
+                        </tr>
+                        <tr>
+                            <td>稀有外卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">7.50%</td>
+                            <td class="probability-low">7.50%</td>
+                        </tr>
+                        <tr>
+                            <td>史诗外卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">7.00%</td>
+                            <td class="probability-low">7.00%</td>
+                        </tr>
+                        <tr>
+                            <td>传说外卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">6.50%</td>
+                            <td class="probability-low">6.50%</td>
+                        </tr>
+                        <tr>
+                            <td>英雄外卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">6.50%</td>
+                            <td class="probability-low">6.50%</td>
+                        </tr>
+                        <tr>
+                            <td>战旗</td>
+                            <td>-</td>
+                            <td class="probability-low">3.85%</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>表情</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">3.85%</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>进化碎片</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">5.50%</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>进化卡</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-low">5.00%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- 赛季宝箱内容 -->
+        <div class="chest-content" data-chest="season">
+            <div class="tab-content active" id="season-chest-probability">
+                <h2 class="section-title">赛季宝箱 - 开箱概率分析</h2>
+                
+                <div class="chart-container">
+                    <canvas id="seasonProbabilityChart"></canvas>
+                </div>
+                
+                <h2 class="section-title">星级升星概率</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>星级</th>
+                            <th>旋转数</th>
+                            <th>1星概率</th>
+                            <th>升星概率</th>
+                            <th>2星概率</th>
+                            <th>升星概率</th>
+                            <th>3星概率</th>
+                            <th>升星概率</th>
+                            <th>4星概率</th>
+                            <th>升星概率</th>
+                            <th>5星概率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>初始只有1星</td>
+                            <td>自带4</td>
+                            <td>6.25%</td>
+                            <td>50%</td>
+                            <td>29.01%</td>
+                            <td>45%</td>
+                            <td>40.89%</td>
+                            <td>40%</td>
+                            <td>21.15%</td>
+                            <td>30%</td>
+                            <td>2.70%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="season-arena-rewards">
+                <h2 class="section-title">赛季宝箱 - 竞技场奖励查询</h2>
+                
+                <div class="arena-selector">
+                    <div class="selector-group">
+                        <label for="season-arena-range">选择竞技场范围:</label>
+                        <select id="season-arena-range">
+                            <option value="arena1-10">竞技场1-10</option>
+                            <option value="arena11-19">竞技场11-19</option>
+                            <option value="arena20+">竞技场20+</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-group">
+                        <label for="season-star-level">选择星级:</label>
+                        <select id="season-star-level">
+                            <option value="oneStar">一星</option>
+                            <option value="twoStar">二星</option>
+                            <option value="threeStar">三星</option>
+                            <option value="fourStar">四星</option>
+                            <option value="fiveStar">五星</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="reward-card">
+                    <h3 class="reward-title">奖励详情</h3>
+                    <div class="reward-grid" id="season-reward-details">
+                        <!-- 奖励详情将通过JavaScript动态填充 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 进化宝箱内容 -->
+        <div class="chest-content" data-chest="evolution">
+            <div class="tab-content active" id="evolution-chest-probability">
+                <h2 class="section-title">进化宝箱 - 开箱概率分析</h2>
+                
+                <div class="chart-container">
+                    <canvas id="evolutionProbabilityChart"></canvas>
+                </div>
+                
+                <h2 class="section-title">星级升星概率</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>星级</th>
+                            <th>旋转数</th>
+                            <th>3星概率</th>
+                            <th>升星概率</th>
+                            <th>4星概率</th>
+                            <th>升星概率</th>
+                            <th>5星概率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3星</td>
+                            <td>自带3</td>
+                            <td>49.30%</td>
+                            <td>21%</td>
+                            <td>45.60%</td>
+                            <td>9%</td>
+                            <td>5.10%</td>
+                        </tr>
+                        <tr>
+                            <td>4星</td>
+                            <td>自带3</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>79.20%</td>
+                            <td>11%</td>
+                            <td>20.80%</td>
+                        </tr>
+                        <tr>
+                            <td>5星</td>
+                            <td>无旋转</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>100.00%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="evolution-box-rewards">
+                <h2 class="section-title">进化宝箱 - 奖励概率</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>奖励类型</th>
+                            <th>3星概率</th>
+                            <th>4星概率</th>
+                            <th>5星概率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>随机进化碎片</td>
+                            <td class="probability-high">100%</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>随机进化碎片*2</td>
+                            <td>-</td>
+                            <td class="probability-high">100%</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>随机进化碎片*6</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="probability-high">100%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- 英雄宝箱内容 -->
+        <div class="chest-content" data-chest="hero">
+            <div class="tab-content active" id="hero-box-rewards">
+                <h2 class="section-title">英雄宝箱 - 奖励数量</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>等级</th>
+                            <th>2星数量</th>
+                            <th>3星数量</th>
+                            <th>4星数量</th>
+                            <th>5星数量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>4</td>
+                            <td>16</td>
+                            <td>200</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>6</td>
+                            <td>24</td>
+                            <td>200</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>8</td>
+                            <td>32</td>
+                            <td>200</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>10</td>
+                            <td>40</td>
+                            <td>200</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>数据来源：皇室战争游戏数据 | 本工具仅供参考，实际游戏数据以官方为准</p>
+        </div>
+    </div>
+
+    <script>
+        // 普通宝箱竞技场奖励数据
+        const normalArenaData = {
+            oneStar: [
+                { arenaRange: "1", starLevel: 1, gold: 50, commonCard: 2, rareCard: 1 },
+                { arenaRange: "2", starLevel: 2, gold: 75, commonCard: 2, rareCard: 1 },
+                { arenaRange: "3", starLevel: 3, gold: 100, commonCard: 3, rareCard: 1 },
+                { arenaRange: "4", starLevel: 4, gold: 125, commonCard: 4, rareCard: 1 },
+                { arenaRange: "5", starLevel: 5, gold: 150, commonCard: 5, rareCard: 1 },
+                { arenaRange: "6", starLevel: 6, gold: 200, commonCard: 6, rareCard: 1 },
+                { arenaRange: "7", starLevel: 7, gold: 250, commonCard: 8, rareCard: 2 },
+                { arenaRange: "8", starLevel: 8, gold: 325, commonCard: 10, rareCard: 2 },
+                { arenaRange: "9-10", starLevel: 9, gold: 400, commonCard: 13, rareCard: 3 },
+                { arenaRange: "11-12", starLevel: 10, gold: 500, commonCard: 16, rareCard: 3 },
+                { arenaRange: "13-15", starLevel: 11, gold: 600, commonCard: 19, rareCard: 4 },
+                { arenaRange: "16-18", starLevel: 12, gold: 700, commonCard: 22, rareCard: 4 },
+                { arenaRange: "19-21", starLevel: 13, gold: 800, commonCard: 25, rareCard: 5 },
+                { arenaRange: "22-24", starLevel: 14, gold: 900, commonCard: 28, rareCard: 6 },
+                { arenaRange: "25-27", starLevel: 15, gold: 1000, commonCard: 31, rareCard: 6 },
+                { arenaRange: "28+", starLevel: 16, gold: 1100, commonCard: 34, rareCard: 7 }
+            ],
+            twoStar: [
+                { arenaRange: "1", starLevel: 1, gold: 200, commonCard: 6, rareCard: 2, epicCard: 0 },
+                { arenaRange: "2", starLevel: 2, gold: 300, commonCard: 9, rareCard: 2, epicCard: 0 },
+                { arenaRange: "3", starLevel: 3, gold: 400, commonCard: 12, rareCard: 2, epicCard: 0 },
+                { arenaRange: "4", starLevel: 4, gold: 500, commonCard: 16, rareCard: 3, epicCard: 0 },
+                { arenaRange: "5", starLevel: 5, gold: 600, commonCard: 19, rareCard: 4, epicCard: 0 },
+                { arenaRange: "6", starLevel: 6, gold: 800, commonCard: 25, rareCard: 5, epicCard: 1 },
+                { arenaRange: "7", starLevel: 7, gold: 1000, commonCard: 31, rareCard: 6, epicCard: 1 },
+                { arenaRange: "8", starLevel: 8, gold: 1300, commonCard: 40, rareCard: 8, epicCard: 1 },
+                { arenaRange: "9-10", starLevel: 9, gold: 1600, commonCard: 50, rareCard: 10, epicCard: 1 },
+                { arenaRange: "11-12", starLevel: 10, gold: 2000, commonCard: 62, rareCard: 12, epicCard: 2 },
+                { arenaRange: "13-15", starLevel: 11, gold: 2400, commonCard: 75, rareCard: 15, epicCard: 2 },
+                { arenaRange: "16-18", starLevel: 12, gold: 2800, commonCard: 88, rareCard: 18, epicCard: 2 },
+                { arenaRange: "19-21", starLevel: 13, gold: 3200, commonCard: 100, rareCard: 20, epicCard: 3 },
+                { arenaRange: "22-24", starLevel: 14, gold: 3600, commonCard: 112, rareCard: 23, epicCard: 3 },
+                { arenaRange: "25-27", starLevel: 15, gold: 4000, commonCard: 125, rareCard: 25, epicCard: 3 },
+                { arenaRange: "28+", starLevel: 16, gold: 4400, commonCard: 138, rareCard: 28, epicCard: 3 }
+            ],
+            threeStar: [
+                { arenaRange: "1", starLevel: 1, gold: 800, commonCard: 25, rareCard: 5, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "2", starLevel: 2, gold: 1200, commonCard: 38, rareCard: 8, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "3", starLevel: 3, gold: 1600, commonCard: 50, rareCard: 10, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "4", starLevel: 4, gold: 2000, commonCard: 63, rareCard: 13, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "5", starLevel: 5, gold: 2400, commonCard: 75, rareCard: 15, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "6", starLevel: 6, gold: 3200, commonCard: 100, rareCard: 20, epicCard: 2, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "7", starLevel: 7, gold: 4000, commonCard: 125, rareCard: 25, epicCard: 3, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "8", starLevel: 8, gold: 5200, commonCard: 163, rareCard: 33, epicCard: 4, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "9-10", starLevel: 9, gold: 6400, commonCard: 200, rareCard: 40, epicCard: 5, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "11-12", starLevel: 10, gold: 8000, commonCard: 250, rareCard: 50, epicCard: 6, legendaryCard: 1, heroCard: 0 },
+                { arenaRange: "13-15", starLevel: 11, gold: 9600, commonCard: 300, rareCard: 60, epicCard: 8, legendaryCard: 1, heroCard: 0 },
+                { arenaRange: "16-18", starLevel: 12, gold: 11200, commonCard: 350, rareCard: 70, epicCard: 9, legendaryCard: 1, heroCard: 1 },
+                { arenaRange: "19-21", starLevel: 13, gold: 12800, commonCard: 400, rareCard: 80, epicCard: 10, legendaryCard: 1, heroCard: 1 },
+                { arenaRange: "22-24", starLevel: 14, gold: 14400, commonCard: 450, rareCard: 90, epicCard: 11, legendaryCard: 1, heroCard: 1 },
+                { arenaRange: "25-27", starLevel: 15, gold: 16000, commonCard: 500, rareCard: 100, epicCard: 13, legendaryCard: 1, heroCard: 1 },
+                { arenaRange: "28+", starLevel: 16, gold: 17600, commonCard: 550, rareCard: 110, epicCard: 14, legendaryCard: 2, heroCard: 1 }
+            ],
+            fourStar: [
+                { arenaRange: "1", starLevel: 1, commonCard: 100, rareCard: 20, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "2", starLevel: 2, commonCard: 150, rareCard: 30, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "3", starLevel: 3, commonCard: 200, rareCard: 40, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "4", starLevel: 4, commonCard: 250, rareCard: 50, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "5", starLevel: 5, commonCard: 300, rareCard: 60, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "6", starLevel: 6, commonCard: 400, rareCard: 80, epicCard: 10, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "7", starLevel: 7, commonCard: 500, rareCard: 100, epicCard: 13, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "8", starLevel: 8, commonCard: 650, rareCard: 130, epicCard: 16, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "9-10", starLevel: 9, commonCard: 800, rareCard: 160, epicCard: 20, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "11-12", starLevel: 10, commonCard: 1000, rareCard: 200, epicCard: 25, legendaryCard: 3, heroCard: 0 },
+                { arenaRange: "13-15", starLevel: 11, commonCard: 1200, rareCard: 240, epicCard: 30, legendaryCard: 3, heroCard: 0 },
+                { arenaRange: "16-18", starLevel: 12, commonCard: 1400, rareCard: 280, epicCard: 35, legendaryCard: 4, heroCard: 3 },
+                { arenaRange: "19-21", starLevel: 13, commonCard: 1600, rareCard: 320, epicCard: 40, legendaryCard: 4, heroCard: 3 },
+                { arenaRange: "22-24", starLevel: 14, commonCard: 1800, rareCard: 360, epicCard: 45, legendaryCard: 5, heroCard: 4 },
+                { arenaRange: "25-27", starLevel: 15, commonCard: 2000, rareCard: 400, epicCard: 50, legendaryCard: 5, heroCard: 4 },
+                { arenaRange: "28+", starLevel: 16, commonCard: 2200, rareCard: 440, epicCard: 55, legendaryCard: 6, heroCard: 4 }
+            ]
+        };
+
+        // 魔法宝箱竞技场奖励数据
+        const magicArenaData = {
+            oneStar: [
+                { arenaRange: "1", starLevel: 1, gold: 50, commonCard: 2, rareCard: 1 },
+                { arenaRange: "2", starLevel: 2, gold: 75, commonCard: 2, rareCard: 1 },
+                { arenaRange: "3", starLevel: 3, gold: 100, commonCard: 3, rareCard: 1 },
+                { arenaRange: "4", starLevel: 4, gold: 125, commonCard: 4, rareCard: 1 },
+                { arenaRange: "5", starLevel: 5, gold: 150, commonCard: 5, rareCard: 1 },
+                { arenaRange: "6", starLevel: 6, gold: 200, commonCard: 6, rareCard: 1 },
+                { arenaRange: "7", starLevel: 7, gold: 250, commonCard: 8, rareCard: 2 },
+                { arenaRange: "8", starLevel: 8, gold: 325, commonCard: 10, rareCard: 2 },
+                { arenaRange: "9-10", starLevel: 9, gold: 400, commonCard: 13, rareCard: 3 },
+                { arenaRange: "11-12", starLevel: 10, gold: 500, commonCard: 16, rareCard: 3 },
+                { arenaRange: "13-15", starLevel: 11, gold: 600, commonCard: 19, rareCard: 4 },
+                { arenaRange: "16-18", starLevel: 12, gold: 700, commonCard: 22, rareCard: 4 },
+                { arenaRange: "19-21", starLevel: 13, gold: 800, commonCard: 25, rareCard: 5 },
+                { arenaRange: "22-24", starLevel: 14, gold: 900, commonCard: 28, rareCard: 6 },
+                { arenaRange: "25-27", starLevel: 15, gold: 1000, commonCard: 31, rareCard: 6 },
+                { arenaRange: "28+", starLevel: 16, gold: 1100, commonCard: 34, rareCard: 7 }
+            ],
+            twoStar: [
+                { arenaRange: "1", starLevel: 1, gold: 200, banner: 0, commonCard: 6, rareCard: 2, epicCard: 0 },
+                { arenaRange: "2", starLevel: 2, gold: 300, banner: 0, commonCard: 9, rareCard: 2, epicCard: 0 },
+                { arenaRange: "3", starLevel: 3, gold: 400, banner: 0, commonCard: 12, rareCard: 2, epicCard: 0 },
+                { arenaRange: "4", starLevel: 4, gold: 500, banner: 0, commonCard: 16, rareCard: 3, epicCard: 0 },
+                { arenaRange: "5", starLevel: 5, gold: 600, banner: 1, commonCard: 19, rareCard: 4, epicCard: 0 },
+                { arenaRange: "6", starLevel: 6, gold: 800, banner: 1, commonCard: 25, rareCard: 5, epicCard: 1 },
+                { arenaRange: "7", starLevel: 7, gold: 1000, banner: 1, commonCard: 31, rareCard: 6, epicCard: 1 },
+                { arenaRange: "8", starLevel: 8, gold: 1300, banner: 1, commonCard: 40, rareCard: 8, epicCard: 1 },
+                { arenaRange: "9-10", starLevel: 9, gold: 1600, banner: 1, commonCard: 50, rareCard: 10, epicCard: 1 },
+                { arenaRange: "11-12", starLevel: 10, gold: 2000, banner: 1, commonCard: 62, rareCard: 12, epicCard: 2 },
+                { arenaRange: "13-15", starLevel: 11, gold: 2400, banner: 1, commonCard: 75, rareCard: 15, epicCard: 2 },
+                { arenaRange: "16-18", starLevel: 12, gold: 2800, banner: 1, commonCard: 88, rareCard: 18, epicCard: 2 },
+                { arenaRange: "19-21", starLevel: 13, gold: 3200, banner: 1, commonCard: 100, rareCard: 20, epicCard: 3 },
+                { arenaRange: "22-24", starLevel: 14, gold: 3600, banner: 1, commonCard: 112, rareCard: 23, epicCard: 3 },
+                { arenaRange: "25-27", starLevel: 15, gold: 4000, banner: 1, commonCard: 125, rareCard: 25, epicCard: 3 },
+                { arenaRange: "28+", starLevel: 16, gold: 4400, banner: 1, commonCard: 138, rareCard: 28, epicCard: 3 }
+            ],
+            threeStar: [
+                { arenaRange: "1", starLevel: 1, gold: 800, emote: 0, commonCard: 25, rareCard: 5, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "2", starLevel: 2, gold: 1200, emote: 0, commonCard: 38, rareCard: 8, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "3", starLevel: 3, gold: 1600, emote: 0, commonCard: 50, rareCard: 10, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "4", starLevel: 4, gold: 2000, emote: 0, commonCard: 63, rareCard: 13, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "5", starLevel: 5, gold: 2400, emote: 1, commonCard: 75, rareCard: 15, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "6", starLevel: 6, gold: 3200, emote: 1, commonCard: 100, rareCard: 20, epicCard: 2, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "7", starLevel: 7, gold: 4000, emote: 1, commonCard: 125, rareCard: 25, epicCard: 3, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "8", starLevel: 8, gold: 5200, emote: 1, commonCard: 163, rareCard: 33, epicCard: 4, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "9-10", starLevel: 9, gold: 6400, emote: 1, commonCard: 200, rareCard: 40, epicCard: 5, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "11-12", starLevel: 10, gold: 8000, emote: 1, commonCard: 250, rareCard: 50, epicCard: 6, legendaryCard: 1, heroCard: 0 },
+                { arenaRange: "13-15", starLevel: 11, gold: 9600, emote: 1, commonCard: 300, rareCard: 60, epicCard: 8, legendaryCard: 1, heroCard: 0 },
+                { arenaRange: "16-18", starLevel: 12, gold: 11200, emote: 1, commonCard: 350, rareCard: 70, epicCard: 9, legendaryCard: 1, heroCard: 1 },
+                { arenaRange: "19-21", starLevel: 13, gold: 12800, emote: 1, commonCard: 400, rareCard: 80, epicCard: 10, legendaryCard: 1, heroCard: 1 },
+                { arenaRange: "22-24", starLevel: 14, gold: 14400, emote: 1, commonCard: 450, rareCard: 90, epicCard: 11, legendaryCard: 1, heroCard: 1 },
+                { arenaRange: "25-27", starLevel: 15, gold: 16000, emote: 1, commonCard: 500, rareCard: 100, epicCard: 13, legendaryCard: 1, heroCard: 1 },
+                { arenaRange: "28+", starLevel: 16, gold: 17600, emote: 1, commonCard: 550, rareCard: 110, epicCard: 14, legendaryCard: 2, heroCard: 1 }
+            ],
+            fourStar: [
+                { arenaRange: "1", starLevel: 1, commonWildCard: 0, rareWildCard: 0, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 0, commonCard: 100, rareCard: 20, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "2", starLevel: 2, commonWildCard: 50, rareWildCard: 10, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 0, commonCard: 150, rareCard: 30, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "3", starLevel: 3, commonWildCard: 67, rareWildCard: 13, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 2, commonCard: 200, rareCard: 40, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "4", starLevel: 4, commonWildCard: 83, rareWildCard: 17, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 2, commonCard: 250, rareCard: 50, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "5", starLevel: 5, commonWildCard: 100, rareWildCard: 20, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 2, commonCard: 300, rareCard: 60, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "6", starLevel: 6, commonWildCard: 135, rareWildCard: 27, epicWildCard: 3, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 2, commonCard: 400, rareCard: 80, epicCard: 10, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "7", starLevel: 7, commonWildCard: 165, rareWildCard: 33, epicWildCard: 4, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 2, commonCard: 500, rareCard: 100, epicCard: 13, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "8", starLevel: 8, commonWildCard: 215, rareWildCard: 43, epicWildCard: 5, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 2, commonCard: 650, rareCard: 130, epicCard: 16, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "9-10", starLevel: 9, commonWildCard: 265, rareWildCard: 53, epicWildCard: 7, legendaryWildCard: 0, heroWildCard: 0, evolutionShard: 2, commonCard: 800, rareCard: 160, epicCard: 20, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "11-12", starLevel: 10, commonWildCard: 335, rareWildCard: 67, epicWildCard: 8, legendaryWildCard: 1, heroWildCard: 0, evolutionShard: 2, commonCard: 1000, rareCard: 200, epicCard: 25, legendaryCard: 3, heroCard: 0 },
+                { arenaRange: "13-15", starLevel: 11, commonWildCard: 400, rareWildCard: 80, epicWildCard: 10, legendaryWildCard: 1, heroWildCard: 0, evolutionShard: 2, commonCard: 1200, rareCard: 240, epicCard: 30, legendaryCard: 3, heroCard: 0 },
+                { arenaRange: "16-18", starLevel: 12, commonWildCard: 465, rareWildCard: 93, epicWildCard: 12, legendaryWildCard: 1, heroWildCard: 1, evolutionShard: 2, commonCard: 1400, rareCard: 280, epicCard: 35, legendaryCard: 4, heroCard: 3 },
+                { arenaRange: "19-21", starLevel: 13, commonWildCard: 535, rareWildCard: 107, epicWildCard: 13, legendaryWildCard: 1, heroWildCard: 1, evolutionShard: 2, commonCard: 1600, rareCard: 320, epicCard: 40, legendaryCard: 4, heroCard: 3 },
+                { arenaRange: "22-24", starLevel: 14, commonWildCard: 600, rareWildCard: 120, epicWildCard: 15, legendaryWildCard: 2, heroWildCard: 1, evolutionShard: 2, commonCard: 1800, rareCard: 360, epicCard: 45, legendaryCard: 5, heroCard: 4 },
+                { arenaRange: "25-27", starLevel: 15, commonWildCard: 665, rareWildCard: 133, epicWildCard: 17, legendaryWildCard: 2, heroWildCard: 1, evolutionShard: 2, commonCard: 2000, rareCard: 400, epicCard: 50, legendaryCard: 5, heroCard: 4 },
+                { arenaRange: "28+", starLevel: 16, commonWildCard: 735, rareWildCard: 147, epicWildCard: 18, legendaryWildCard: 2, heroWildCard: 1, evolutionShard: 2, commonCard: 2200, rareCard: 440, epicCard: 55, legendaryCard: 6, heroCard: 4 }
+            ],
+            fiveStar: [
+                { arenaRange: "1", starLevel: 1, commonWildCard: 0, rareWildCard: 0, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 0, commonCard: 300, rareCard: 60, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "2", starLevel: 2, commonWildCard: 150, rareWildCard: 30, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 0, commonCard: 450, rareCard: 90, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "3", starLevel: 3, commonWildCard: 200, rareWildCard: 40, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 1, commonCard: 600, rareCard: 120, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "4", starLevel: 4, commonWildCard: 250, rareWildCard: 50, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 1, commonCard: 750, rareCard: 150, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "5", starLevel: 5, commonWildCard: 300, rareWildCard: 60, epicWildCard: 0, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 1, commonCard: 900, rareCard: 180, epicCard: 0, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "6", starLevel: 6, commonWildCard: 400, rareWildCard: 80, epicWildCard: 10, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 1, commonCard: 1200, rareCard: 240, epicCard: 30, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "7", starLevel: 7, commonWildCard: 500, rareWildCard: 100, epicWildCard: 13, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 1, commonCard: 1500, rareCard: 300, epicCard: 38, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "8", starLevel: 8, commonWildCard: 650, rareWildCard: 130, epicWildCard: 16, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 1, commonCard: 1950, rareCard: 390, epicCard: 48, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "9-10", starLevel: 9, commonWildCard: 800, rareWildCard: 160, epicWildCard: 20, legendaryWildCard: 0, heroWildCard: 0, evolutionCard: 1, commonCard: 2400, rareCard: 480, epicCard: 60, legendaryCard: 0, heroCard: 0 },
+                { arenaRange: "11-12", starLevel: 10, commonWildCard: 1000, rareWildCard: 200, epicWildCard: 25, legendaryWildCard: 3, heroWildCard: 0, evolutionCard: 1, commonCard: 3000, rareCard: 600, epicCard: 75, legendaryCard: 8, heroCard: 0 },
+                { arenaRange: "13-15", starLevel: 11, commonWildCard: 1200, rareWildCard: 240, epicWildCard: 30, legendaryWildCard: 3, heroWildCard: 0, evolutionCard: 1, commonCard: 3600, rareCard: 720, epicCard: 90, legendaryCard: 10, heroCard: 0 },
+                { arenaRange: "16-18", starLevel: 12, commonWildCard: 1400, rareWildCard: 280, epicWildCard: 35, legendaryWildCard: 4, heroWildCard: 3, evolutionCard: 1, commonCard: 4200, rareCard: 840, epicCard: 105, legendaryCard: 11, heroCard: 8 },
+                { arenaRange: "19-21", starLevel: 13, commonWildCard: 1600, rareWildCard: 320, epicWildCard: 40, legendaryWildCard: 4, heroWildCard: 3, evolutionCard: 1, commonCard: 4800, rareCard: 960, epicCard: 120, legendaryCard: 13, heroCard: 10 },
+                { arenaRange: "22-24", starLevel: 14, commonWildCard: 1800, rareWildCard: 360, epicWildCard: 45, legendaryWildCard: 5, heroWildCard: 4, evolutionCard: 1, commonCard: 5400, rareCard: 1080, epicCard: 135, legendaryCard: 14, heroCard: 11 },
+                { arenaRange: "25-27", starLevel: 15, commonWildCard: 2000, rareWildCard: 400, epicWildCard: 50, legendaryWildCard: 6, heroWildCard: 4, evolutionCard: 1, commonCard: 6000, rareCard: 1200, epicCard: 150, legendaryCard: 16, heroCard: 12 },
+                { arenaRange: "28+", starLevel: 16, commonWildCard: 2500, rareWildCard: 465, epicWildCard: 60, legendaryWildCard: 7, heroWildCard: 5, evolutionCard: 1, commonCard: 7500, rareCard: 1400, epicCard: 180, legendaryCard: 20, heroCard: 15 }
+            ]
+        };
+
+        // 赛季宝箱竞技场奖励数据
+        const seasonArenaData = {
+            "arena1-10": {
+                oneStar: [
+                    { name: "赛季普通卡", probability: 1, amount: 30 }
+                ],
+                twoStar: [
+                    { name: "赛季普通卡", probability: 0.5714, amount: 60 },
+                    { name: "赛季稀有卡", probability: 0.4286, amount: 15 }
+                ],
+                threeStar: [
+                    { name: "赛季普通卡", probability: 0.4444, amount: 125 },
+                    { name: "赛季稀有卡", probability: 0.3333, amount: 35 },
+                    { name: "赛季史诗卡", probability: 0.2222, amount: 3 }
+                ],
+                fourStar: [
+                    { name: "赛季普通卡", probability: 0.3906, amount: 250 },
+                    { name: "赛季稀有卡", probability: 0.2344, amount: 75 },
+                    { name: "赛季史诗卡", probability: 0.125, amount: 6 },
+                    { name: "战旗装饰", probability: 0.125, amount: 1 },
+                    { name: "战旗框架", probability: 0.125, amount: 1 }
+                ],
+                fiveStar: [
+                    { name: "赛季普通卡", probability: 0.2878, amount: 500 },
+                    { name: "赛季稀有卡", probability: 0.2158, amount: 150 },
+                    { name: "赛季史诗卡", probability: 0.1439, amount: 12 },
+                    { name: "战旗装饰", probability: 0.141, amount: 1 },
+                    { name: "战旗框架", probability: 0.141, amount: 1 },
+                    { name: "表情", probability: 0.0705, amount: 1 }
+                ]
+            },
+            "arena11-19": {
+                oneStar: [
+                    { name: "赛季普通卡", probability: 1, amount: 75 }
+                ],
+                twoStar: [
+                    { name: "赛季普通卡", probability: 0.5714, amount: 150 },
+                    { name: "赛季稀有卡", probability: 0.4286, amount: 50 }
+                ],
+                threeStar: [
+                    { name: "赛季普通卡", probability: 0.4444, amount: 375 },
+                    { name: "赛季稀有卡", probability: 0.3333, amount: 100 },
+                    { name: "赛季史诗卡", probability: 0.2222, amount: 10 }
+                ],
+                fourStar: [
+                    { name: "赛季普通卡", probability: 0.3125, amount: 750 },
+                    { name: "赛季稀有卡", probability: 0.2344, amount: 200 },
+                    { name: "赛季史诗卡", probability: 0.1563, amount: 20 },
+                    { name: "赛季传说卡", probability: 0.0469, amount: 3 },
+                    { name: "战旗装饰", probability: 0.125, amount: 1 },
+                    { name: "战旗框架", probability: 0.125, amount: 1 }
+                ],
+                fiveStar: [
+                    { name: "赛季普通卡", probability: 0.1515, amount: 1500 },
+                    { name: "赛季稀有卡", probability: 0.1515, amount: 400 },
+                    { name: "赛季史诗卡", probability: 0.1515, amount: 40 },
+                    { name: "赛季传说卡", probability: 0.0682, amount: 6 },
+                    { name: "赛季英雄卡", probability: 0.0455, amount: 2 },
+                    { name: "战旗装饰", probability: 0.1515, amount: 1 },
+                    { name: "战旗框架", probability: 0.1515, amount: 1 },
+                    { name: "表情", probability: 0.0758, amount: 1 },
+                    { name: "赛季进化碎片", probability: 0.0455, amount: 1 },
+                    { name: "赛季进化卡", probability: 0.0076, amount: 1 }
+                ]
+            },
+            "arena20+": {
+                oneStar: [
+                    { name: "赛季普通卡", probability: 1, amount: 125 }
+                ],
+                twoStar: [
+                    { name: "赛季普通卡", probability: 0.5714, amount: 250 },
+                    { name: "赛季稀有卡", probability: 0.4286, amount: 60 }
+                ],
+                threeStar: [
+                    { name: "赛季普通卡", probability: 0.4444, amount: 500 },
+                    { name: "赛季稀有卡", probability: 0.3333, amount: 125 },
+                    { name: "赛季史诗卡", probability: 0.2222, amount: 12 }
+                ],
+                fourStar: [
+                    { name: "赛季普通卡", probability: 0.3125, amount: 1000 },
+                    { name: "赛季稀有卡", probability: 0.2344, amount: 250 },
+                    { name: "赛季史诗卡", probability: 0.1563, amount: 25 },
+                    { name: "赛季传说卡", probability: 0.0469, amount: 5 },
+                    { name: "战旗装饰", probability: 0.125, amount: 1 },
+                    { name: "战旗框架", probability: 0.125, amount: 1 }
+                ],
+                fiveStar: [
+                    { name: "赛季普通卡", probability: 0.1515, amount: 2000 },
+                    { name: "赛季稀有卡", probability: 0.1515, amount: 500 },
+                    { name: "赛季史诗卡", probability: 0.1515, amount: 50 },
+                    { name: "赛季传说卡", probability: 0.0682, amount: 10 },
+                    { name: "赛季英雄卡", probability: 0.0455, amount: 5 },
+                    { name: "战旗装饰", probability: 0.1515, amount: 1 },
+                    { name: "战旗框架", probability: 0.1515, amount: 1 },
+                    { name: "表情", probability: 0.0758, amount: 1 },
+                    { name: "赛季进化碎片", probability: 0.0455, amount: 1 },
+                    { name: "赛季进化卡", probability: 0.0076, amount: 1 }
+                ]
+            }
+        };
+
+        // 宝箱类型切换功能
+        document.querySelectorAll('.chest-type').forEach(type => {
+            type.addEventListener('click', () => {
+                // 移除所有活动宝箱类型
+                document.querySelectorAll('.chest-type').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.chest-content').forEach(c => c.classList.remove('active'));
+                
+                // 激活当前宝箱类型
+                type.classList.add('active');
+                document.querySelector(`.chest-content[data-chest="${type.dataset.chest}"]`).classList.add('active');
+                
+                // 重置标签页到第一个
+                const chestType = type.dataset.chest;
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                document.querySelector('.tab').classList.add('active');
+                document.querySelector(`#${chestType}-chest-probability`).classList.add('active');
+            });
+        });
+
+        // 标签切换功能
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const chestType = document.querySelector('.chest-type.active').dataset.chest;
+                
+                // 移除所有活动标签和内容
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll(`.chest-content[data-chest="${chestType}"] .tab-content`).forEach(c => c.classList.remove('active'));
+                
+                // 激活当前标签和内容
+                tab.classList.add('active');
+                document.querySelector(`#${chestType}-${tab.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        // 初始化普通宝箱图表
+        function initNormalProbabilityChart() {
+            const ctx = document.getElementById('normalProbabilityChart').getContext('2d');
+            
+            // 普通宝箱只有1星开箱数据
+            const starLevels = ['1星开箱'];
+            
+            // 数据集：1星开箱时获得1-4星卡片的概率
+            const datasets = [
+                {
+                    label: '获得1星',
+                    data: [31.44],
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得2星',
+                    data: [45.71],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得3星',
+                    data: [18.53],
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得4星',
+                    data: [4.32],
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    stack: 'Stack 0'
+                }
+            ];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: starLevels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '概率 (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '普通宝箱开箱获得不同星级卡片的概率分布',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 初始化魔法宝箱图表
+        function initMagicProbabilityChart() {
+            const ctx = document.getElementById('magicProbabilityChart').getContext('2d');
+            
+            // 魔法宝箱数据
+            const starLevels = ['1星开箱', '2星开箱', '3星开箱', '4星开箱', '5星开箱'];
+            
+            // 数据集：每个星级开箱时获得1-5星卡片的概率
+            const datasets = [
+                {
+                    label: '获得1星',
+                    data: [31.64, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得2星',
+                    data: [43.04, 33.36, 0, 0, 0],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得3星',
+                    data: [20.25, 45.59, 40.96, 0, 0],
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得4星',
+                    data: [4.06, 19.71, 56.97, 96.00, 0],
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得5星',
+                    data: [1.01, 1.34, 2.07, 4.00, 100.00],
+                    backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                    stack: 'Stack 0'
+                }
+            ];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: starLevels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '概率 (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '魔法宝箱开箱获得不同星级卡片的概率分布',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 初始化赛季宝箱图表
+        function initSeasonProbabilityChart() {
+            const ctx = document.getElementById('seasonProbabilityChart').getContext('2d');
+            
+            // 赛季宝箱只有1星开箱数据
+            const starLevels = ['1星开箱'];
+            
+            // 数据集：1星开箱时获得1-5星卡片的概率
+            const datasets = [
+                {
+                    label: '获得1星',
+                    data: [6.25],
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得2星',
+                    data: [29.01],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得3星',
+                    data: [40.89],
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得4星',
+                    data: [21.15],
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得5星',
+                    data: [2.70],
+                    backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                    stack: 'Stack 0'
+                }
+            ];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: starLevels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '概率 (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '赛季宝箱开箱获得不同星级卡片的概率分布',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 初始化进化宝箱图表
+        function initEvolutionProbabilityChart() {
+            const ctx = document.getElementById('evolutionProbabilityChart').getContext('2d');
+            
+            // 进化宝箱数据
+            const starLevels = ['3星开箱', '4星开箱', '5星开箱'];
+            
+            // 数据集：每个星级开箱时获得3-5星卡片的概率
+            const datasets = [
+                {
+                    label: '获得3星',
+                    data: [49.30, 0, 0],
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得4星',
+                    data: [45.60, 79.20, 0],
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得5星',
+                    data: [5.10, 20.80, 100.00],
+                    backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                    stack: 'Stack 0'
+                }
+            ];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: starLevels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '概率 (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '进化宝箱开箱获得不同星级卡片的概率分布',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 初始化普通宝箱竞技场等级选择器
+        function initNormalArenaSelector() {
+            const starLevelSelect = document.getElementById('normal-star-level');
+            const arenaLevelSelect = document.getElementById('normal-arena-level');
+            
+            // 填充初始选项
+            updateNormalArenaLevelOptions();
+            
+            // 星级变化时更新竞技场等级选项
+            starLevelSelect.addEventListener('change', updateNormalArenaLevelOptions);
+            
+            // 竞技场等级变化时更新奖励显示
+            arenaLevelSelect.addEventListener('change', updateNormalRewardDetails);
+            
+            // 初始显示奖励
+            updateNormalRewardDetails();
+        }
+        
+        // 更新普通宝箱竞技场等级选项
+        function updateNormalArenaLevelOptions() {
+            const starLevel = document.getElementById('normal-star-level').value;
+            const arenaLevelSelect = document.getElementById('normal-arena-level');
+            
+            // 清空现有选项
+            arenaLevelSelect.innerHTML = '';
+            
+            // 添加新选项
+            normalArenaData[starLevel].forEach(arena => {
+                const option = document.createElement('option');
+                option.value = arena.arenaRange;
+                option.textContent = `竞技场 ${arena.arenaRange} (星级等级 ${arena.starLevel})`;
+                arenaLevelSelect.appendChild(option);
+            });
+        }
+        
+        // 更新普通宝箱奖励详情
+        function updateNormalRewardDetails() {
+            const starLevel = document.getElementById('normal-star-level').value;
+            const arenaRange = document.getElementById('normal-arena-level').value;
+            const rewardDetails = document.getElementById('normal-reward-details');
+            
+            // 清空现有内容
+            rewardDetails.innerHTML = '';
+            
+            // 查找选中的竞技场数据
+            const arena = normalArenaData[starLevel].find(a => a.arenaRange === arenaRange);
+            
+            if (!arena) return;
+            
+            // 根据星级等级生成不同的奖励显示
+            let rewards = [];
+            
+            if (starLevel === 'oneStar') {
+                rewards = [
+                    { name: '金币', value: arena.gold },
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard }
+                ];
+            } else if (starLevel === 'twoStar') {
+                rewards = [
+                    { name: '金币', value: arena.gold },
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard },
+                    { name: '随机史诗卡', value: arena.epicCard || 0 }
+                ];
+            } else if (starLevel === 'threeStar') {
+                rewards = [
+                    { name: '金币', value: arena.gold },
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard },
+                    { name: '随机史诗卡', value: arena.epicCard || 0 },
+                    { name: '随机传奇卡', value: arena.legendaryCard || 0 },
+                    { name: '随机英雄卡', value: arena.heroCard || 0 }
+                ];
+            } else if (starLevel === 'fourStar') {
+                rewards = [
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard },
+                    { name: '随机史诗卡', value: arena.epicCard || 0 },
+                    { name: '随机传奇卡', value: arena.legendaryCard || 0 },
+                    { name: '随机英雄卡', value: arena.heroCard || 0 }
+                ];
+            }
+            
+            // 生成奖励项目
+            rewards.forEach(reward => {
+                if (reward.value > 0) {
+                    const rewardItem = document.createElement('div');
+                    rewardItem.className = 'reward-item';
+                    rewardItem.innerHTML = `
+                        <span class="reward-name">${reward.name}</span>
+                        <span class="reward-value">${reward.value}</span>
+                    `;
+                    rewardDetails.appendChild(rewardItem);
+                }
+            });
+        }
+
+        // 初始化魔法宝箱竞技场等级选择器
+        function initMagicArenaSelector() {
+            const starLevelSelect = document.getElementById('magic-star-level');
+            const arenaLevelSelect = document.getElementById('magic-arena-level');
+            
+            // 填充初始选项
+            updateMagicArenaLevelOptions();
+            
+            // 星级变化时更新竞技场等级选项
+            starLevelSelect.addEventListener('change', updateMagicArenaLevelOptions);
+            
+            // 竞技场等级变化时更新奖励显示
+            arenaLevelSelect.addEventListener('change', updateMagicRewardDetails);
+            
+            // 初始显示奖励
+            updateMagicRewardDetails();
+        }
+        
+        // 更新魔法宝箱竞技场等级选项
+        function updateMagicArenaLevelOptions() {
+            const starLevel = document.getElementById('magic-star-level').value;
+            const arenaLevelSelect = document.getElementById('magic-arena-level');
+            
+            // 清空现有选项
+            arenaLevelSelect.innerHTML = '';
+            
+            // 添加新选项
+            magicArenaData[starLevel].forEach(arena => {
+                const option = document.createElement('option');
+                option.value = arena.arenaRange;
+                option.textContent = `竞技场 ${arena.arenaRange} (星级等级 ${arena.starLevel})`;
+                arenaLevelSelect.appendChild(option);
+            });
+        }
+        
+        // 更新魔法宝箱奖励详情
+        function updateMagicRewardDetails() {
+            const starLevel = document.getElementById('magic-star-level').value;
+            const arenaRange = document.getElementById('magic-arena-level').value;
+            const rewardDetails = document.getElementById('magic-reward-details');
+            
+            // 清空现有内容
+            rewardDetails.innerHTML = '';
+            
+            // 查找选中的竞技场数据
+            const arena = magicArenaData[starLevel].find(a => a.arenaRange === arenaRange);
+            
+            if (!arena) return;
+            
+            // 根据星级等级生成不同的奖励显示
+            let rewards = [];
+            
+            if (starLevel === 'oneStar') {
+                rewards = [
+                    { name: '金币', value: arena.gold },
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard }
+                ];
+            } else if (starLevel === 'twoStar') {
+                rewards = [
+                    { name: '金币', value: arena.gold },
+                    { name: '战旗', value: arena.banner || 0 },
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard },
+                    { name: '随机史诗卡', value: arena.epicCard || 0 }
+                ];
+            } else if (starLevel === 'threeStar') {
+                rewards = [
+                    { name: '金币', value: arena.gold },
+                    { name: '表情', value: arena.emote || 0 },
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard },
+                    { name: '随机史诗卡', value: arena.epicCard || 0 },
+                    { name: '随机传奇卡', value: arena.legendaryCard || 0 },
+                    { name: '随机英雄卡', value: arena.heroCard || 0 }
+                ];
+            } else if (starLevel === 'fourStar') {
+                rewards = [
+                    { name: '普通外卡', value: arena.commonWildCard || 0 },
+                    { name: '稀有外卡', value: arena.rareWildCard || 0 },
+                    { name: '史诗外卡', value: arena.epicWildCard || 0 },
+                    { name: '传奇外卡', value: arena.legendaryWildCard || 0 },
+                    { name: '英雄外卡', value: arena.heroWildCard || 0 },
+                    { name: '随机碎片', value: arena.evolutionShard || 0 },
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard },
+                    { name: '随机史诗卡', value: arena.epicCard || 0 },
+                    { name: '随机传奇卡', value: arena.legendaryCard || 0 },
+                    { name: '随机英雄卡', value: arena.heroCard || 0 }
+                ];
+            } else if (starLevel === 'fiveStar') {
+                rewards = [
+                    { name: '普通外卡', value: arena.commonWildCard || 0 },
+                    { name: '稀有外卡', value: arena.rareWildCard || 0 },
+                    { name: '史诗外卡', value: arena.epicWildCard || 0 },
+                    { name: '传奇外卡', value: arena.legendaryWildCard || 0 },
+                    { name: '英雄外卡', value: arena.heroWildCard || 0 },
+                    { name: '进化卡', value: arena.evolutionCard || 0 },
+                    { name: '随机普通卡', value: arena.commonCard },
+                    { name: '随机稀有卡', value: arena.rareCard },
+                    { name: '随机史诗卡', value: arena.epicCard || 0 },
+                    { name: '随机传奇卡', value: arena.legendaryCard || 0 },
+                    { name: '随机英雄卡', value: arena.heroCard || 0 }
+                ];
+            }
+            
+            // 生成奖励项目
+            rewards.forEach(reward => {
+                if (reward.value > 0) {
+                    const rewardItem = document.createElement('div');
+                    rewardItem.className = 'reward-item';
+                    rewardItem.innerHTML = `
+                        <span class="reward-name">${reward.name}</span>
+                        <span class="reward-value">${reward.value}</span>
+                    `;
+                    rewardDetails.appendChild(rewardItem);
+                }
+            });
+        }
+
+        // 初始化赛季宝箱竞技场选择器
+        function initSeasonArenaSelector() {
+            const arenaRangeSelect = document.getElementById('season-arena-range');
+            const starLevelSelect = document.getElementById('season-star-level');
+            
+            // 初始显示奖励
+            updateSeasonRewardDetails();
+            
+            // 竞技场范围或星级变化时更新奖励显示
+            arenaRangeSelect.addEventListener('change', updateSeasonRewardDetails);
+            starLevelSelect.addEventListener('change', updateSeasonRewardDetails);
+        }
+        
+        // 更新赛季宝箱奖励详情
+        function updateSeasonRewardDetails() {
+            const arenaRange = document.getElementById('season-arena-range').value;
+            const starLevel = document.getElementById('season-star-level').value;
+            const rewardDetails = document.getElementById('season-reward-details');
+            
+            // 清空现有内容
+            rewardDetails.innerHTML = '';
+            
+            // 获取奖励数据
+            const rewards = seasonArenaData[arenaRange][starLevel];
+            
+            if (!rewards) return;
+            
+            // 生成奖励项目
+            rewards.forEach(reward => {
+                const rewardItem = document.createElement('div');
+                rewardItem.className = 'reward-item';
+                rewardItem.innerHTML = `
+                    <span class="reward-name">${reward.name}</span>
+                    <span class="reward-value">${(reward.probability * 100).toFixed(2)}% (${reward.amount}个)</span>
+                `;
+                rewardDetails.appendChild(rewardItem);
+            });
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            initNormalProbabilityChart();
+            initMagicProbabilityChart();
+            initSeasonProbabilityChart();
+            initEvolutionProbabilityChart();
+            initNormalArenaSelector();
+            initMagicArenaSelector();
+            initSeasonArenaSelector();
+        });
+    </script>
+</body>
+</html>
