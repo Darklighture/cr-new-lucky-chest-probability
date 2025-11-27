@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>皇室战争宝箱概率查询</title>
+    <title>皇室战争宝箱查询</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -796,7 +796,6 @@
                     <thead>
                         <tr>
                             <th>星级</th>
-                            <th>旋转数</th>
                             <th>3星概率</th>
                             <th>升星概率</th>
                             <th>4星概率</th>
@@ -807,7 +806,6 @@
                     <tbody>
                         <tr>
                             <td>3星</td>
-                            <td>自带3</td>
                             <td>49.30%</td>
                             <td>21%</td>
                             <td>45.60%</td>
@@ -816,7 +814,6 @@
                         </tr>
                         <tr>
                             <td>4星</td>
-                            <td>自带3</td>
                             <td>-</td>
                             <td>-</td>
                             <td>79.20%</td>
@@ -825,7 +822,6 @@
                         </tr>
                         <tr>
                             <td>5星</td>
-                            <td>无旋转</td>
                             <td>-</td>
                             <td>-</td>
                             <td>-</td>
@@ -871,7 +867,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>随机进化碎片</td>
+                            <td>随机进化碎片*1</td>
                             <td class="probability-high">100%</td>
                             <td>-</td>
                             <td>-</td>
@@ -1759,7 +1755,7 @@
                     { name: '史诗外卡', value: arena.epicWildCard || 0 },
                     { name: '传奇外卡', value: arena.legendaryWildCard || 0 },
                     { name: '英雄外卡', value: arena.heroWildCard || 0 },
-                    { name: '随机碎片', value: arena.evolutionShard || 0 },
+                    { name: '随机进化碎片', value: arena.evolutionShard || 0 },
                     { name: '随机普通卡', value: arena.commonCard },
                     { name: '随机稀有卡', value: arena.rareCard },
                     { name: '随机史诗卡', value: arena.epicCard || 0 },
