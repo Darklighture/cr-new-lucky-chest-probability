@@ -149,10 +149,11 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            font-size: 0.9rem;
         }
         
         .data-table th, .data-table td {
-            padding: 12px 15px;
+            padding: 10px 12px;
             text-align: center;
             border: 1px solid var(--border-color);
         }
@@ -208,29 +209,6 @@
             color: var(--primary-color);
         }
         
-        .reward-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .reward-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 15px;
-            background-color: rgba(0, 0, 0, 0.02);
-            border-radius: 5px;
-        }
-        
-        .reward-name {
-            font-weight: 500;
-        }
-        
-        .reward-value {
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
         .probability-high {
             color: #4CAF50;
             font-weight: 600;
@@ -264,12 +242,16 @@
                 flex-direction: column;
             }
             
-            .reward-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .chart-container {
                 height: 300px;
+            }
+            
+            .data-table {
+                font-size: 0.8rem;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 8px 10px;
             }
         }
     </style>
@@ -278,7 +260,7 @@
     <div class="container">
         <header>
             <h1>皇室战争宝箱概率查询</h1>
-            <p class="subtitle">查看各类宝箱开箱概率、升星概率及竞技场奖励详情</p>
+            <p class="subtitle">查看各种宝箱开箱概率及竞技场奖励详情</p>
         </header>
         
         <div class="chest-type-selector">
@@ -291,8 +273,8 @@
         
         <div class="tabs">
             <div class="tab active" data-tab="chest-probability">开箱概率</div>
-            <div class="tab" data-tab="arena-rewards">竞技场奖励</div>
-            <div class="tab" data-tab="box-rewards">宝箱奖励</div>
+            <div class="tab" data-tab="arena-rewards">奖励数量</div>
+            <div class="tab" data-tab="box-rewards">奖励概率</div>
         </div>
         
         <!-- 普通宝箱内容 -->
@@ -304,7 +286,7 @@
                     <canvas id="normalProbabilityChart"></canvas>
                 </div>
                 
-                <h2 class="section-title">星级升星概率</h2>
+                <h2 class="section-title">开箱概率</h2>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -336,21 +318,21 @@
             </div>
             
             <div class="tab-content" id="normal-arena-rewards">
-                <h2 class="section-title">普通宝箱 - 竞技场奖励查询</h2>
+                <h2 class="section-title">普通宝箱 - 奖励数量查询</h2>
                 
                 <div class="arena-selector">
                     <div class="selector-group">
-                        <label for="normal-star-level">选择星级:</label>
+                        <label for="normal-star-level">选择宝箱星级:</label>
                         <select id="normal-star-level">
-                            <option value="oneStar">一星等级</option>
-                            <option value="twoStar">二星等级</option>
-                            <option value="threeStar">三星等级</option>
-                            <option value="fourStar">四星等级</option>
+                            <option value="oneStar">一星</option>
+                            <option value="twoStar">二星</option>
+                            <option value="threeStar">三星</option>
+                            <option value="fourStar">四星</option>
                         </select>
                     </div>
                     
                     <div class="selector-group">
-                        <label for="normal-arena-level">选择竞技场等级:</label>
+                        <label for="normal-arena-level">选择竞技场范围:</label>
                         <select id="normal-arena-level">
                             <!-- 选项将通过JavaScript动态填充 -->
                         </select>
@@ -359,14 +341,14 @@
                 
                 <div class="reward-card">
                     <h3 class="reward-title">奖励详情</h3>
-                    <div class="reward-grid" id="normal-reward-details">
-                        <!-- 奖励详情将通过JavaScript动态填充 -->
-                    </div>
+                    <table class="data-table" id="normal-rewards-table">
+                        <!-- 表格将通过JavaScript动态填充 -->
+                    </table>
                 </div>
             </div>
             
             <div class="tab-content" id="normal-box-rewards">
-                <h2 class="section-title">普通宝箱 - 宝箱等级12奖励概率</h2>
+                <h2 class="section-title">普通宝箱 - 奖励概率（宝箱等级12）</h2>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -434,7 +416,7 @@
                     <canvas id="magicProbabilityChart"></canvas>
                 </div>
                 
-                <h2 class="section-title">星级升星概率</h2>
+                <h2 class="section-title">开箱概率</h2>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -522,22 +504,22 @@
             </div>
             
             <div class="tab-content" id="magic-arena-rewards">
-                <h2 class="section-title">魔法宝箱 - 竞技场奖励查询</h2>
+                <h2 class="section-title">魔法宝箱 - 奖励数量查询</h2>
                 
                 <div class="arena-selector">
                     <div class="selector-group">
-                        <label for="magic-star-level">选择星级:</label>
+                        <label for="magic-star-level">选择宝箱星级:</label>
                         <select id="magic-star-level">
-                            <option value="oneStar">一星等级</option>
-                            <option value="twoStar">二星等级</option>
-                            <option value="threeStar">三星等级</option>
-                            <option value="fourStar">四星等级</option>
-                            <option value="fiveStar">五星等级</option>
+                            <option value="oneStar">一星</option>
+                            <option value="twoStar">二星</option>
+                            <option value="threeStar">三星</option>
+                            <option value="fourStar">四星</option>
+                            <option value="fiveStar">五星</option>
                         </select>
                     </div>
                     
                     <div class="selector-group">
-                        <label for="magic-arena-level">选择竞技场等级:</label>
+                        <label for="magic-arena-level">选择竞技场范围:</label>
                         <select id="magic-arena-level">
                             <!-- 选项将通过JavaScript动态填充 -->
                         </select>
@@ -546,14 +528,14 @@
                 
                 <div class="reward-card">
                     <h3 class="reward-title">奖励详情</h3>
-                    <div class="reward-grid" id="magic-reward-details">
-                        <!-- 奖励详情将通过JavaScript动态填充 -->
-                    </div>
+                    <table class="data-table" id="magic-rewards-table">
+                        <!-- 表格将通过JavaScript动态填充 -->
+                    </table>
                 </div>
             </div>
             
             <div class="tab-content" id="magic-box-rewards">
-                <h2 class="section-title">魔法宝箱 - 宝箱等级12奖励概率</h2>
+                <h2 class="section-title">魔法宝箱 - 奖励概率（宝箱等级12）</h2>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -700,7 +682,7 @@
                     <canvas id="seasonProbabilityChart"></canvas>
                 </div>
                 
-                <h2 class="section-title">星级升星概率</h2>
+                <h2 class="section-title">开箱概率</h2>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -736,20 +718,11 @@
             </div>
             
             <div class="tab-content" id="season-arena-rewards">
-                <h2 class="section-title">赛季宝箱 - 竞技场奖励查询</h2>
+                <h2 class="section-title">赛季宝箱 - 奖励数量查询</h2>
                 
                 <div class="arena-selector">
                     <div class="selector-group">
-                        <label for="season-arena-range">选择竞技场范围:</label>
-                        <select id="season-arena-range">
-                            <option value="arena1-10">竞技场1-10</option>
-                            <option value="arena11-19">竞技场11-19</option>
-                            <option value="arena20+">竞技场20+</option>
-                        </select>
-                    </div>
-                    
-                    <div class="selector-group">
-                        <label for="season-star-level">选择星级:</label>
+                        <label for="season-star-level">选择宝箱星级:</label>
                         <select id="season-star-level">
                             <option value="oneStar">一星</option>
                             <option value="twoStar">二星</option>
@@ -758,14 +731,54 @@
                             <option value="fiveStar">五星</option>
                         </select>
                     </div>
+                    
+                    <div class="selector-group">
+                        <label for="season-arena-range">选择竞技场范围:</label>
+                        <select id="season-arena-range">
+                            <option value="arena1-10">竞技场1-10</option>
+                            <option value="arena11-19">竞技场11-19</option>
+                            <option value="arena20+">竞技场20+</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="reward-card">
                     <h3 class="reward-title">奖励详情</h3>
-                    <div class="reward-grid" id="season-reward-details">
-                        <!-- 奖励详情将通过JavaScript动态填充 -->
+                    <table class="data-table" id="season-rewards-table">
+                        <!-- 表格将通过JavaScript动态填充 -->
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 赛季宝箱奖励概率页面 -->
+            <div class="tab-content" id="season-box-rewards">
+                <h2 class="section-title">赛季宝箱 - 奖励概率查询</h2>
+                
+                <div class="arena-selector">
+                    <div class="selector-group">
+                        <label for="season-probability-star-level">选择宝箱星级:</label>
+                        <select id="season-probability-star-level">
+                            <option value="oneStar">一星</option>
+                            <option value="twoStar">二星</option>
+                            <option value="threeStar">三星</option>
+                            <option value="fourStar">四星</option>
+                            <option value="fiveStar">五星</option>
+                        </select>
+                    </div>
+                    
+                    <div class="selector-group">
+                        <label for="season-probability-arena-range">选择竞技场范围:</label>
+                        <select id="season-probability-arena-range">
+                            <option value="arena1-10">竞技场1-10</option>
+                            <option value="arena11-19">竞技场11-19</option>
+                            <option value="arena20+">竞技场20+</option>
+                        </select>
                     </div>
                 </div>
+                
+                <table class="data-table" id="season-probability-table">
+                    <!-- 表格将通过JavaScript动态填充 -->
+                </table>
             </div>
         </div>
         
@@ -778,7 +791,7 @@
                     <canvas id="evolutionProbabilityChart"></canvas>
                 </div>
                 
-                <h2 class="section-title">星级升星概率</h2>
+                <h2 class="section-title">开箱概率</h2>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -823,6 +836,28 @@
                 </table>
             </div>
             
+            <div class="tab-content" id="evolution-arena-rewards">
+                <h2 class="section-title">进化宝箱 - 奖励数量</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>宝箱等级</th>
+                            <th>3星数量</th>
+                            <th>4星数量</th>
+                            <th>5星数量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>无</td>
+                            <td class="probability-low">1</td>
+                            <td class="probability-medium">2</td>
+                            <td class="probability-high">6</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
             <div class="tab-content" id="evolution-box-rewards">
                 <h2 class="section-title">进化宝箱 - 奖励概率</h2>
                 <table class="data-table">
@@ -860,12 +895,12 @@
         
         <!-- 英雄宝箱内容 -->
         <div class="chest-content" data-chest="hero">
-            <div class="tab-content active" id="hero-box-rewards">
+            <div class="tab-content active" id="hero-arena-rewards">
                 <h2 class="section-title">英雄宝箱 - 奖励数量</h2>
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>等级</th>
+                            <th>宝箱等级</th>
                             <th>2星数量</th>
                             <th>3星数量</th>
                             <th>4星数量</th>
@@ -912,7 +947,7 @@
     </div>
 
     <script>
-        // 普通宝箱竞技场奖励数据
+        // 普通宝箱奖励数量数据
         const normalArenaData = {
             oneStar: [
                 { arenaRange: "1", starLevel: 1, gold: 50, commonCard: 2, rareCard: 1 },
@@ -988,7 +1023,7 @@
             ]
         };
 
-        // 魔法宝箱竞技场奖励数据
+        // 魔法宝箱奖励数量数据
         const magicArenaData = {
             oneStar: [
                 { arenaRange: "1", starLevel: 1, gold: 50, commonCard: 2, rareCard: 1 },
@@ -1082,7 +1117,7 @@
             ]
         };
 
-        // 赛季宝箱竞技场奖励数据
+        // 赛季宝箱奖励数据
         const seasonArenaData = {
             "arena1-10": {
                 oneStar: [
@@ -1226,7 +1261,7 @@
             // 普通宝箱只有1星开箱数据
             const starLevels = ['1星开箱'];
             
-            // 数据集：1星开箱时获得1-4星卡片的概率
+            // 数据集：获得1-4星宝箱的概率
             const datasets = [
                 {
                     label: '获得1星',
@@ -1280,7 +1315,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: '普通宝箱开箱获得不同星级卡片的概率分布',
+                            text: '获得不同星级普通宝箱的概率分布',
                             font: {
                                 size: 16
                             }
@@ -1304,7 +1339,7 @@
             // 魔法宝箱数据
             const starLevels = ['1星开箱', '2星开箱', '3星开箱', '4星开箱', '5星开箱'];
             
-            // 数据集：每个星级开箱时获得1-5星卡片的概率
+            // 数据集：获得1-5星宝箱的概率
             const datasets = [
                 {
                     label: '获得1星',
@@ -1364,7 +1399,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: '魔法宝箱开箱获得不同星级卡片的概率分布',
+                            text: '获得不同星级魔法宝箱的概率分布',
                             font: {
                                 size: 16
                             }
@@ -1388,7 +1423,7 @@
             // 赛季宝箱只有1星开箱数据
             const starLevels = ['1星开箱'];
             
-            // 数据集：1星开箱时获得1-5星卡片的概率
+            // 数据集：获得1-5星宝箱的概率
             const datasets = [
                 {
                     label: '获得1星',
@@ -1448,7 +1483,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: '赛季宝箱开箱获得不同星级卡片的概率分布',
+                            text: '获得不同星级赛季宝箱的概率分布',
                             font: {
                                 size: 16
                             }
@@ -1472,7 +1507,7 @@
             // 进化宝箱数据
             const starLevels = ['3星开箱', '4星开箱', '5星开箱'];
             
-            // 数据集：每个星级开箱时获得3-5星卡片的概率
+            // 数据集：获得3-5星宝箱的概率
             const datasets = [
                 {
                     label: '获得3星',
@@ -1520,7 +1555,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: '进化宝箱开箱获得不同星级卡片的概率分布',
+                            text: '获得不同星级进化宝箱的概率分布',
                             font: {
                                 size: 16
                             }
@@ -1548,11 +1583,11 @@
             // 星级变化时更新竞技场等级选项
             starLevelSelect.addEventListener('change', updateNormalArenaLevelOptions);
             
-            // 竞技场等级变化时更新奖励显示
-            arenaLevelSelect.addEventListener('change', updateNormalRewardDetails);
+            // 竞技场等级变化时更新表格
+            arenaLevelSelect.addEventListener('change', updateNormalRewardsTable);
             
-            // 初始显示奖励
-            updateNormalRewardDetails();
+            // 初始显示表格
+            updateNormalRewardsTable();
         }
         
         // 更新普通宝箱竞技场等级选项
@@ -1567,26 +1602,30 @@
             normalArenaData[starLevel].forEach(arena => {
                 const option = document.createElement('option');
                 option.value = arena.arenaRange;
-                option.textContent = `竞技场 ${arena.arenaRange} (星级等级 ${arena.starLevel})`;
+                option.textContent = `竞技场 ${arena.arenaRange} (宝箱等级 ${arena.starLevel})`;
                 arenaLevelSelect.appendChild(option);
             });
         }
         
-        // 更新普通宝箱奖励详情
-        function updateNormalRewardDetails() {
+        // 更新普通宝箱奖励表格
+        function updateNormalRewardsTable() {
             const starLevel = document.getElementById('normal-star-level').value;
             const arenaRange = document.getElementById('normal-arena-level').value;
-            const rewardDetails = document.getElementById('normal-reward-details');
+            const rewardsTable = document.getElementById('normal-rewards-table');
             
             // 清空现有内容
-            rewardDetails.innerHTML = '';
+            rewardsTable.innerHTML = '';
             
             // 查找选中的竞技场数据
             const arena = normalArenaData[starLevel].find(a => a.arenaRange === arenaRange);
             
             if (!arena) return;
             
-            // 根据星级等级生成不同的奖励显示
+            // 根据宝箱等级生成不同的表头
+            let headerRow = '<tr><th>奖励类型</th><th>数量</th></tr>';
+            rewardsTable.innerHTML = headerRow;
+            
+            // 根据宝箱等级生成不同的奖励显示
             let rewards = [];
             
             if (starLevel === 'oneStar') {
@@ -1621,16 +1660,14 @@
                 ];
             }
             
-            // 生成奖励项目
+            // 生成表格行
             rewards.forEach(reward => {
                 if (reward.value > 0) {
-                    const rewardItem = document.createElement('div');
-                    rewardItem.className = 'reward-item';
-                    rewardItem.innerHTML = `
-                        <span class="reward-name">${reward.name}</span>
-                        <span class="reward-value">${reward.value}</span>
-                    `;
-                    rewardDetails.appendChild(rewardItem);
+                    const row = `<tr>
+                        <td>${reward.name}</td>
+                        <td>${reward.value}</td>
+                    </tr>`;
+                    rewardsTable.innerHTML += row;
                 }
             });
         }
@@ -1646,11 +1683,11 @@
             // 星级变化时更新竞技场等级选项
             starLevelSelect.addEventListener('change', updateMagicArenaLevelOptions);
             
-            // 竞技场等级变化时更新奖励显示
-            arenaLevelSelect.addEventListener('change', updateMagicRewardDetails);
+            // 竞技场等级变化时更新表格
+            arenaLevelSelect.addEventListener('change', updateMagicRewardsTable);
             
-            // 初始显示奖励
-            updateMagicRewardDetails();
+            // 初始显示表格
+            updateMagicRewardsTable();
         }
         
         // 更新魔法宝箱竞技场等级选项
@@ -1665,26 +1702,30 @@
             magicArenaData[starLevel].forEach(arena => {
                 const option = document.createElement('option');
                 option.value = arena.arenaRange;
-                option.textContent = `竞技场 ${arena.arenaRange} (星级等级 ${arena.starLevel})`;
+                option.textContent = `竞技场 ${arena.arenaRange} (宝箱等级 ${arena.starLevel})`;
                 arenaLevelSelect.appendChild(option);
             });
         }
         
-        // 更新魔法宝箱奖励详情
-        function updateMagicRewardDetails() {
+        // 更新魔法宝箱奖励表格
+        function updateMagicRewardsTable() {
             const starLevel = document.getElementById('magic-star-level').value;
             const arenaRange = document.getElementById('magic-arena-level').value;
-            const rewardDetails = document.getElementById('magic-reward-details');
+            const rewardsTable = document.getElementById('magic-rewards-table');
             
             // 清空现有内容
-            rewardDetails.innerHTML = '';
+            rewardsTable.innerHTML = '';
             
             // 查找选中的竞技场数据
             const arena = magicArenaData[starLevel].find(a => a.arenaRange === arenaRange);
             
             if (!arena) return;
             
-            // 根据星级等级生成不同的奖励显示
+            // 根据宝箱等级生成不同的表头
+            let headerRow = '<tr><th>奖励类型</th><th>数量</th></tr>';
+            rewardsTable.innerHTML = headerRow;
+            
+            // 根据宝箱等级生成不同的奖励显示
             let rewards = [];
             
             if (starLevel === 'oneStar') {
@@ -1741,16 +1782,14 @@
                 ];
             }
             
-            // 生成奖励项目
+            // 生成表格行
             rewards.forEach(reward => {
                 if (reward.value > 0) {
-                    const rewardItem = document.createElement('div');
-                    rewardItem.className = 'reward-item';
-                    rewardItem.innerHTML = `
-                        <span class="reward-name">${reward.name}</span>
-                        <span class="reward-value">${reward.value}</span>
-                    `;
-                    rewardDetails.appendChild(rewardItem);
+                    const row = `<tr>
+                        <td>${reward.name}</td>
+                        <td>${reward.value}</td>
+                    </tr>`;
+                    rewardsTable.innerHTML += row;
                 }
             });
         }
@@ -1760,37 +1799,90 @@
             const arenaRangeSelect = document.getElementById('season-arena-range');
             const starLevelSelect = document.getElementById('season-star-level');
             
-            // 初始显示奖励
-            updateSeasonRewardDetails();
+            // 初始显示表格
+            updateSeasonRewardsTable();
             
-            // 竞技场范围或星级变化时更新奖励显示
-            arenaRangeSelect.addEventListener('change', updateSeasonRewardDetails);
-            starLevelSelect.addEventListener('change', updateSeasonRewardDetails);
+            // 竞技场范围或星级变化时更新表格
+            arenaRangeSelect.addEventListener('change', updateSeasonRewardsTable);
+            starLevelSelect.addEventListener('change', updateSeasonRewardsTable);
         }
         
-        // 更新赛季宝箱奖励详情
-        function updateSeasonRewardDetails() {
+        // 更新赛季宝箱奖励表格
+        function updateSeasonRewardsTable() {
             const arenaRange = document.getElementById('season-arena-range').value;
             const starLevel = document.getElementById('season-star-level').value;
-            const rewardDetails = document.getElementById('season-reward-details');
+            const rewardsTable = document.getElementById('season-rewards-table');
+                        
+            // 清空现有内容
+            rewardsTable.innerHTML = '';
+
+            // 获取奖励数据
+            const rewards = seasonArenaData[arenaRange][starLevel];
+            
+            if (!rewards) return;
+            
+            // 创建表头
+            const headerRow = '<tr><th>奖励类型</th><th>数量</th></tr>';
+            rewardsTable.innerHTML = headerRow;
+            
+            // 生成表格行
+            rewards.forEach(reward => {
+                const row = `<tr>
+                    <td>${reward.name}</td>
+                    <td>${reward.amount}</td>
+                </tr>`;
+                rewardsTable.innerHTML += row;
+            });
+        }
+
+        // 初始化赛季宝箱奖励概率选择器
+        function initSeasonProbabilitySelector() {
+            const arenaRangeSelect = document.getElementById('season-probability-arena-range');
+            const starLevelSelect = document.getElementById('season-probability-star-level');
+            
+            // 初始显示表格
+            updateSeasonProbabilityTable();
+            
+            // 竞技场范围或星级变化时更新表格
+            arenaRangeSelect.addEventListener('change', updateSeasonProbabilityTable);
+            starLevelSelect.addEventListener('change', updateSeasonProbabilityTable);
+        }
+        
+        // 更新赛季宝箱奖励概率表格
+        function updateSeasonProbabilityTable() {
+            const arenaRange = document.getElementById('season-probability-arena-range').value;
+            const starLevel = document.getElementById('season-probability-star-level').value;
+            const probabilityTable = document.getElementById('season-probability-table');
             
             // 清空现有内容
-            rewardDetails.innerHTML = '';
+            probabilityTable.innerHTML = '';
             
             // 获取奖励数据
             const rewards = seasonArenaData[arenaRange][starLevel];
             
             if (!rewards) return;
             
-            // 生成奖励项目
+            // 创建表头
+            const headerRow = '<tr><th>奖励类型</th><th>概率</th></tr>';
+            probabilityTable.innerHTML = headerRow;
+            
+            // 生成表格行
             rewards.forEach(reward => {
-                const rewardItem = document.createElement('div');
-                rewardItem.className = 'reward-item';
-                rewardItem.innerHTML = `
-                    <span class="reward-name">${reward.name}</span>
-                    <span class="reward-value">${(reward.probability * 100).toFixed(2)}% (${reward.amount}个)</span>
-                `;
-                rewardDetails.appendChild(rewardItem);
+                // 根据概率值添加不同的样式类
+                let probabilityClass = '';
+                if (reward.probability >= 0.5) {
+                    probabilityClass = 'probability-high';
+                } else if (reward.probability >= 0.2) {
+                    probabilityClass = 'probability-medium';
+                } else {
+                    probabilityClass = 'probability-low';
+                }
+                
+                const row = `<tr>
+                    <td>${reward.name}</td>
+                    <td class="${probabilityClass}">${(reward.probability * 100).toFixed(2)}%</td>
+                </tr>`;
+                probabilityTable.innerHTML += row;
             });
         }
 
@@ -1803,6 +1895,7 @@
             initNormalArenaSelector();
             initMagicArenaSelector();
             initSeasonArenaSelector();
+            initSeasonProbabilitySelector();
         });
     </script>
 </body>
