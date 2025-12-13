@@ -260,7 +260,7 @@
     <div class="container">
         <header>
             <h1>皇室战争宝箱概率查询</h1>
-            <p class="subtitle">各种宝箱开箱概率及竞技场奖励详情</p>
+            <p class="subtitle">查询各种宝箱开箱概率及竞技场奖励详情</p>
         </header>
         
         <div class="chest-type-selector">
@@ -438,13 +438,13 @@
                             <td>1星</td>
                             <td>自带4</td>
                             <td>31.64%</td>
-                            <td>25.00%</td>
+                            <td>25%</td>
                             <td>43.04%</td>
-                            <td>23.00%</td>
+                            <td>23%</td>
                             <td>20.25%</td>
-                            <td>23.00%</td>
+                            <td>23%</td>
                             <td>4.06%</td>
-                            <td>23.00%</td>
+                            <td>23%</td>
                             <td>1.01%</td>
                         </tr>
                         <tr>
@@ -453,11 +453,11 @@
                             <td>-</td>
                             <td>-</td>
                             <td>33.36%</td>
-                            <td>24.00%</td>
+                            <td>24%</td>
                             <td>45.59%</td>
-                            <td>20.00%</td>
+                            <td>20%</td>
                             <td>19.71%</td>
-                            <td>6.00%</td>
+                            <td>6%</td>
                             <td>1.34%</td>
                         </tr>
                         <tr>
@@ -468,9 +468,9 @@
                             <td>-</td>
                             <td>-</td>
                             <td>40.96%</td>
-                            <td>20.00%</td>
+                            <td>20%</td>
                             <td>56.97%</td>
-                            <td>2.00%</td>
+                            <td>2%</td>
                             <td>2.07%</td>
                         </tr>
                         <tr>
@@ -483,7 +483,7 @@
                             <td>-</td>
                             <td>-</td>
                             <td>96.00%</td>
-                            <td>4.00%</td>
+                            <td>4%</td>
                             <td>4.00%</td>
                         </tr>
                         <tr>
@@ -703,15 +703,15 @@
                         <tr>
                             <td>初始只有1星</td>
                             <td>自带4</td>
-                            <td>6.25%</td>
-                            <td>50%</td>
-                            <td>29.01%</td>
-                            <td>45%</td>
-                            <td>40.89%</td>
-                            <td>40%</td>
-                            <td>21.15%</td>
-                            <td>30%</td>
-                            <td>2.70%</td>
+                            <td>31.64%</td>
+                            <td>25%</td>
+                            <td>43.04%</td>
+                            <td>23%</td>
+                            <td>20.25%</td>
+                            <td>23%</td>
+                            <td>4.06%</td>
+                            <td>23%</td>
+                            <td>1.01%</td>
                         </tr>
                     </tbody>
                 </table>
@@ -890,8 +890,46 @@
         </div>
         
         <!-- 英雄宝箱内容 -->
-        <div class="chest-content" data-chest="hero">
-            <div class="tab-content active" id="hero-arena-rewards">
+                <div class="chest-content" data-chest="hero">
+            <div class="tab-content active" id="hero-chest-probability">
+                <h2 class="section-title">英雄宝箱 - 开箱概率分析</h2>
+                
+                <div class="chart-container">
+                    <canvas id="heroProbabilityChart"></canvas>
+                </div>
+
+              <h2 class="section-title">开箱概率</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>星级</th>
+                            <th>旋转数</th>
+                            <th>2星概率</th>
+                            <th>升星概率</th>
+                            <th>3星概率</th>
+                            <th>升星概率</th>
+                            <th>4星概率</th>
+                            <th>升星概率</th>
+                            <th>5星概率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>初始只有2星</td>
+                            <td>自带3</td>
+                            <td>34.30%</td>
+                            <td>30%</td>
+                            <td>52.10%</td>
+                            <td>18%</td>
+                            <td>12.60%</td>
+                            <td>18.5%</td>
+                            <td>1.00%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+         <div class="tab-content" id="hero-arena-rewards">
                 <h2 class="section-title">英雄宝箱 - 奖励数量</h2>
                 <table class="data-table">
                     <thead>
@@ -1122,99 +1160,105 @@
         const seasonArenaData = {
             "arena1-10": {
                 oneStar: [
-                    { name: "赛季普通卡", probability: 1, amount: 30 }
+                    { name: "赛季普通卡", probability: 0.5263, amount: 13 },
+                    { name: "赛季稀有卡", probability: 0.4737, amount: 3 }
                 ],
                 twoStar: [
-                    { name: "赛季普通卡", probability: 0.5714, amount: 60 },
-                    { name: "赛季稀有卡", probability: 0.4286, amount: 15 }
+                    { name: "赛季普通卡", probability: 0.2857, amount: 50 },
+                    { name: "赛季稀有卡", probability: 0.2571, amount: 10 },
+                    { name: "赛季史诗卡", probability: 0.2286, amount: 1 },
+                    { name: "战旗装饰", probability: 0.1143, amount: 1 },
+                    { name: "战旗框架", probability: 0.1143, amount: 1 }
                 ],
                 threeStar: [
-                    { name: "赛季普通卡", probability: 0.4444, amount: 125 },
-                    { name: "赛季稀有卡", probability: 0.3333, amount: 35 },
-                    { name: "赛季史诗卡", probability: 0.2222, amount: 3 }
+                    { name: "赛季普通卡", probability: 0.3226, amount: 200 },
+                    { name: "赛季稀有卡", probability: 0.2903, amount: 40 },
+                    { name: "赛季史诗卡", probability: 0.2581, amount: 5 },                   
+                    { name: "表情", probability: 0.129, amount: 1 }
                 ],
                 fourStar: [
-                    { name: "赛季普通卡", probability: 0.3906, amount: 250 },
-                    { name: "赛季稀有卡", probability: 0.2344, amount: 75 },
-                    { name: "赛季史诗卡", probability: 0.125, amount: 6 },
-                    { name: "战旗装饰", probability: 0.125, amount: 1 },
-                    { name: "战旗框架", probability: 0.125, amount: 1 }
+                    { name: "赛季普通卡", probability: 0.3704, amount: 800 },
+                    { name: "赛季稀有卡", probability: 0.3333, amount: 160 },
+                    { name: "赛季史诗卡", probability: 0.2963, amount: 20 }
                 ],
                 fiveStar: [
-                    { name: "赛季普通卡", probability: 0.2878, amount: 500 },
-                    { name: "赛季稀有卡", probability: 0.2158, amount: 150 },
-                    { name: "赛季史诗卡", probability: 0.1439, amount: 12 },
-                    { name: "战旗装饰", probability: 0.141, amount: 1 },
-                    { name: "战旗框架", probability: 0.141, amount: 1 },
-                    { name: "表情", probability: 0.0705, amount: 1 }
+                    { name: "赛季普通卡", probability: 0.3704, amount: 2400 },
+                    { name: "赛季稀有卡", probability: 0.3333, amount: 480 },
+                    { name: "赛季史诗卡", probability: 0.2963, amount: 60 }
                 ]
             },
             "arena11-19": {
                 oneStar: [
-                    { name: "赛季普通卡", probability: 1, amount: 75 }
+                    { name: "赛季普通卡", probability: 0.5263, amount: 25 },
+                    { name: "赛季稀有卡", probability: 0.4737, amount: 5 }
                 ],
                 twoStar: [
-                    { name: "赛季普通卡", probability: 0.5714, amount: 150 },
-                    { name: "赛季稀有卡", probability: 0.4286, amount: 50 }
+                    { name: "赛季普通卡", probability: 0.2857, amount: 100 },
+                    { name: "赛季稀有卡", probability: 0.2571, amount: 20 },
+                    { name: "赛季史诗卡", probability: 0.2286, amount: 3 },
+                    { name: "战旗装饰", probability: 0.1143, amount: 1 },
+                    { name: "战旗框架", probability: 0.1143, amount: 1 }
                 ],
                 threeStar: [
-                    { name: "赛季普通卡", probability: 0.4444, amount: 375 },
-                    { name: "赛季稀有卡", probability: 0.3333, amount: 100 },
-                    { name: "赛季史诗卡", probability: 0.2222, amount: 10 }
+                    { name: "赛季普通卡", probability: 0.2577, amount: 400 },
+                    { name: "赛季稀有卡", probability: 0.2320, amount: 80 },
+                    { name: "赛季史诗卡", probability: 0.2062, amount: 10 },
+                    { name: "赛季传奇卡", probability: 0.1082, amount: 1 },
+                    { name: "赛季英雄卡", probability: 0.0928, amount: 1 },
+                    { name: "表情", probability: 0.1031, amount: 1 }
                 ],
                 fourStar: [
-                    { name: "赛季普通卡", probability: 0.3125, amount: 750 },
-                    { name: "赛季稀有卡", probability: 0.2344, amount: 200 },
-                    { name: "赛季史诗卡", probability: 0.1563, amount: 20 },
-                    { name: "赛季传奇卡", probability: 0.0469, amount: 3 },
-                    { name: "战旗装饰", probability: 0.125, amount: 1 },
-                    { name: "战旗框架", probability: 0.125, amount: 1 }
+                    { name: "赛季普通卡", probability: 0.2646, amount: 1600 },
+                    { name: "赛季稀有卡", probability: 0.2381, amount: 320 },
+                    { name: "赛季史诗卡", probability: 0.2116, amount: 40 },
+                    { name: "赛季传奇卡", probability: 0.1111, amount: 4 },
+                    { name: "赛季英雄卡", probability: 0.0952, amount: 3 },
+                    { name: "赛季进化碎片", probability: 0.0794, amount: 1 }
                 ],
                 fiveStar: [
-                    { name: "赛季普通卡", probability: 0.1515, amount: 1500 },
-                    { name: "赛季稀有卡", probability: 0.1515, amount: 400 },
-                    { name: "赛季史诗卡", probability: 0.1515, amount: 40 },
-                    { name: "赛季传奇卡", probability: 0.0682, amount: 6 },
-                    { name: "赛季英雄卡", probability: 0.0455, amount: 2 },
-                    { name: "战旗装饰", probability: 0.1515, amount: 1 },
-                    { name: "战旗框架", probability: 0.1515, amount: 1 },
-                    { name: "表情", probability: 0.0758, amount: 1 },
-                    { name: "赛季进化碎片", probability: 0.0455, amount: 1 },
-                    { name: "赛季进化卡", probability: 0.0076, amount: 1 }
+                    { name: "赛季普通卡", probability: 0.2646, amount: 4800 },
+                    { name: "赛季稀有卡", probability: 0.2381, amount: 960 },
+                    { name: "赛季史诗卡", probability: 0.2116, amount: 120 },
+                    { name: "赛季传奇卡", probability: 0.1111, amount: 13 },
+                    { name: "赛季英雄卡", probability: 0.0952, amount: 10 },
+                    { name: "赛季进化卡", probability: 0.0794, amount: 1 }
                 ]
             },
             "arena20+": {
                 oneStar: [
-                    { name: "赛季普通卡", probability: 1, amount: 125 }
+                    { name: "赛季普通卡", probability: 0.5263, amount: 35 },
+                    { name: "赛季稀有卡", probability: 0.4737, amount: 7 }
                 ],
                 twoStar: [
-                    { name: "赛季普通卡", probability: 0.5714, amount: 250 },
-                    { name: "赛季稀有卡", probability: 0.4286, amount: 60 }
+                    { name: "赛季普通卡", probability: 0.2857, amount: 140 },
+                    { name: "赛季稀有卡", probability: 0.2571, amount: 30 },
+                    { name: "赛季史诗卡", probability: 0.2286, amount: 3 },
+                    { name: "战旗装饰", probability: 0.1143, amount: 1 },
+                    { name: "战旗框架", probability: 0.1143, amount: 1 }
                 ],
                 threeStar: [
-                    { name: "赛季普通卡", probability: 0.4444, amount: 500 },
-                    { name: "赛季稀有卡", probability: 0.3333, amount: 125 },
-                    { name: "赛季史诗卡", probability: 0.2222, amount: 12 }
+                    { name: "赛季普通卡", probability: 0.2577, amount: 550 },
+                    { name: "赛季稀有卡", probability: 0.2320, amount: 110 },
+                    { name: "赛季史诗卡", probability: 0.2062, amount: 14 },
+                    { name: "赛季传奇卡", probability: 0.1082, amount: 2 },
+                    { name: "赛季英雄卡", probability: 0.0928, amount: 1 },
+                    { name: "表情", probability: 0.1031, amount: 1 }
                 ],
                 fourStar: [
-                    { name: "赛季普通卡", probability: 0.3125, amount: 1000 },
-                    { name: "赛季稀有卡", probability: 0.2344, amount: 250 },
-                    { name: "赛季史诗卡", probability: 0.1563, amount: 25 },
-                    { name: "赛季传奇卡", probability: 0.0469, amount: 5 },
-                    { name: "战旗装饰", probability: 0.125, amount: 1 },
-                    { name: "战旗框架", probability: 0.125, amount: 1 }
+                    { name: "赛季普通卡", probability: 0.2646, amount: 2200 },
+                    { name: "赛季稀有卡", probability: 0.2381, amount: 440 },
+                    { name: "赛季史诗卡", probability: 0.2116, amount: 55 },
+                    { name: "赛季传奇卡", probability: 0.1111, amount: 6 },
+                    { name: "赛季英雄卡", probability: 0.0952, amount: 4 },
+                    { name: "赛季进化碎片", probability: 0.0794, amount: 2 }
                 ],
                 fiveStar: [
-                    { name: "赛季普通卡", probability: 0.1515, amount: 2000 },
-                    { name: "赛季稀有卡", probability: 0.1515, amount: 500 },
-                    { name: "赛季史诗卡", probability: 0.1515, amount: 50 },
-                    { name: "赛季传奇卡", probability: 0.0682, amount: 10 },
-                    { name: "赛季英雄卡", probability: 0.0455, amount: 5 },
-                    { name: "战旗装饰", probability: 0.1515, amount: 1 },
-                    { name: "战旗框架", probability: 0.1515, amount: 1 },
-                    { name: "表情", probability: 0.0758, amount: 1 },
-                    { name: "赛季进化碎片", probability: 0.0455, amount: 1 },
-                    { name: "赛季进化卡", probability: 0.0076, amount: 1 }
+                    { name: "赛季普通卡", probability: 0.2646, amount: 7500 },
+                    { name: "赛季稀有卡", probability: 0.2381, amount: 1400 },
+                    { name: "赛季史诗卡", probability: 0.2116, amount: 180 },
+                    { name: "赛季传奇卡", probability: 0.1111, amount: 20 },
+                    { name: "赛季英雄卡", probability: 0.0952, amount: 15 },
+                    { name: "赛季进化卡", probability: 0.0794, amount: 1 }
                 ]
             }
         };
@@ -1428,31 +1472,31 @@
             const datasets = [
                 {
                     label: '获得1星',
-                    data: [6.25],
+                    data: [31.64],
                     backgroundColor: 'rgba(255, 99, 132, 0.7)',
                     stack: 'Stack 0'
                 },
                 {
                     label: '获得2星',
-                    data: [29.01],
+                    data: [43.04],
                     backgroundColor: 'rgba(54, 162, 235, 0.7)',
                     stack: 'Stack 0'
                 },
                 {
                     label: '获得3星',
-                    data: [40.89],
+                    data: [20.25],
                     backgroundColor: 'rgba(255, 206, 86, 0.7)',
                     stack: 'Stack 0'
                 },
                 {
                     label: '获得4星',
-                    data: [21.15],
+                    data: [4.06],
                     backgroundColor: 'rgba(75, 192, 192, 0.7)',
                     stack: 'Stack 0'
                 },
                 {
                     label: '获得5星',
-                    data: [2.70],
+                    data: [1.01],
                     backgroundColor: 'rgba(153, 102, 255, 0.7)',
                     stack: 'Stack 0'
                 }
@@ -1557,6 +1601,85 @@
                         title: {
                             display: true,
                             text: '获得不同星级进化宝箱的概率分布',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+// 初始化英雄宝箱图表
+        function initheroProbabilityChart() {
+            const ctx = document.getElementById('heroProbabilityChart').getContext('2d');
+            
+            // 英雄宝箱只有2星开箱数据
+            const starLevels = ['2星开箱'];
+            
+            // 数据集：获得2-5星宝箱的概率
+            const datasets = [
+                {
+                    label: '获得2星',
+                    data: [34.3],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得3星',
+                    data: [52.1],
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得4星',
+                    data: [12.6],
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    stack: 'Stack 0'
+                },
+                {
+                    label: '获得5星',
+                    data: [1],
+                    backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                    stack: 'Stack 0'
+                }
+            ];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: starLevels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '概率 (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '获得不同星级英雄宝箱的概率分布',
                             font: {
                                 size: 16
                             }
@@ -1893,6 +2016,7 @@
             initMagicProbabilityChart();
             initSeasonProbabilityChart();
             initEvolutionProbabilityChart();
+            initheroProbabilityChart();
             initNormalArenaSelector();
             initMagicArenaSelector();
             initSeasonArenaSelector();
