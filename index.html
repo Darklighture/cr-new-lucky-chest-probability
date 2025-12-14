@@ -33,6 +33,31 @@
             margin: 0 auto;
             padding: 20px;
         }
+
+        .language-switcher {
+            text-align: right;
+            margin-bottom: 15px;
+        }
+        
+        .lang-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .lang-btn:hover {
+            background-color: #ff8c42;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
         
         header {
             text-align: center;
@@ -258,6 +283,9 @@
 </head>
 <body>
     <div class="container">
+           <div class="language-switcher">
+                  <a href="en.html" class="lang-btn">English Version</a>
+           </div>
         <header>
             <h1>皇室战争宝箱概率查询</h1>
             <p class="subtitle">查询各种宝箱开箱概率及竞技场奖励详情</p>
@@ -982,6 +1010,7 @@
         
         <div class="footer">
             <p>数据来源：皇室战争游戏数据 | 本工具仅供参考，实际游戏数据以官方为准</p>
+            <p style="margin-top: 10px;"><a href="en.html" style="color: var(--primary-color);">切换到英文版</a></p>
         </div>
     </div>
 
