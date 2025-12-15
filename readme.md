@@ -1,6 +1,6 @@
 # Clash Royale Chest Probability Tool
 
-A web tool for checking Clash Royale chest drop rate and award probabilities at different arena.
+A web tool for checking Clash Royale drop rates and award probabilities for various chests in different arenas.
 
 ## Features
 - Multiple chest types (Common, Magic, Season, Evolution, Hero)
